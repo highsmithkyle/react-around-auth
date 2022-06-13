@@ -9,9 +9,8 @@ import EditAvatarPopup from './EditAvatarPopup';
 import ImagePopup from './ImagePopup';
 import closeButton from '../images/close-button.svg';
 import api from '../utils/api';
-import { CurrentUserContext } from '../contexts/CurrentUserContext';
-
 import Login from './Login';
+import { CurrentUserContext } from '../contexts/CurrentUserContext';
 
 function App() {
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
