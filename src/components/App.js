@@ -1,27 +1,25 @@
-import React, { useEffect, useState } from "react"
-import Header from "./Header";
-import Footer from "./Footer"
-import Main from "./Main";
-import PopupWithForm from "./PopupWithForm";
-import EditProfilePopup from "./EditProfilePopup";
-import AddPlacePopup from "./AddPlacePopup";
-import EditAvatarPopup from "./EditAvatarPopup";
-import ImagePopup from "./ImagePopup"
-import closeButton from "../images/close-button.svg";
-import api from "../utils/api";
-import { CurrentUserContext } from "../contexts/CurrentUserContext";
+import React, { useEffect, useState } from 'react';
+import Header from './Header';
+import Footer from './Footer';
+import Main from './Main';
+import PopupWithForm from './PopupWithForm';
+import EditProfilePopup from './EditProfilePopup';
+import AddPlacePopup from './AddPlacePopup';
+import EditAvatarPopup from './EditAvatarPopup';
+import ImagePopup from './ImagePopup';
+import closeButton from '../images/close-button.svg';
+import api from '../utils/api';
+import { CurrentUserContext } from '../contexts/CurrentUserContext';
 
+import Login from './Login';
 
 function App() {
-
-
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
   const [selectedCard, setSelectedCard] = useState(null);
   const [cards, setCards] = useState([]);
-  const [currentUser, setCurrentUser] = useState({ name: "", about: "" });
-
+  const [currentUser, setCurrentUser] = useState({ name: '', about: '' });
 
   useEffect(() => {
     api
@@ -29,9 +27,8 @@ function App() {
       .then((data) => {
         setCards(data);
       })
-      .catch((error) => console.error(error))
+      .catch((error) => console.error(error));
   }, []);
-
 
   useEffect(() => {
     api
@@ -42,29 +39,26 @@ function App() {
       .catch((error) => console.error(error));
   }, []);
 
-
-
   function handleCardLike(card) {
     const isLiked = card.likes.some((item) => item._id === currentUser._id);
     api
       .likeCard(card._id, isLiked)
       .then((newCard) => {
         setCards((state) =>
-          state.map((item) => (item._id === card._id ? newCard : item))
+          state.map((item) => (item._id === card._id ? newCard : item)),
         );
       })
       .catch((error) => console.error(error));
   }
 
-
   function handleCardDelete(card) {
-    api.deleteCard(card._id)
+    api
+      .deleteCard(card._id)
       .then(() => {
         setCards(cards.filter((item) => item !== card));
       })
       .catch((error) => console.error(error));
   }
-
 
   function handleUpdateUser(userData) {
     api
@@ -73,7 +67,7 @@ function App() {
         setCurrentUser(res);
         closeAllPopups();
       })
-      .catch((error) => console.error(error))
+      .catch((error) => console.error(error));
   }
 
   function handleUpdateAvatar(userData) {
@@ -95,7 +89,6 @@ function App() {
       })
       .catch((error) => console.error(error));
   }
-
 
   function handleCardClick(card) {
     setSelectedCard(card);
@@ -119,12 +112,11 @@ function App() {
     setSelectedCard(null);
   }
 
-
   return (
-
     <CurrentUserContext.Provider value={currentUser}>
-
       <Header />
+
+      <Login />
 
       <Main
         onEditAvatarClick={handleEditAvatarClick}
@@ -158,9 +150,9 @@ function App() {
       />
 
       <PopupWithForm
-        modalType={"delete"}
-        modalTitle={"Are you sure?"}
-        modalButtonText={"Yes"}
+        modalType={'delete'}
+        modalTitle={'Are you sure?'}
+        modalButtonText={'Yes'}
         closeButton={closeButton}
       />
 
@@ -172,17 +164,7 @@ function App() {
 
       <Footer />
     </CurrentUserContext.Provider>
-
-  )
+  );
 }
 
 export default App;
-
-
-
-
-
-
-
-
-
