@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Route, Routes, Navigate, useNavigate } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
 import Main from './Main';
@@ -11,6 +12,8 @@ import closeButton from '../images/close-button.svg';
 import api from '../utils/api';
 import Login from './Login';
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
+import { getInfo, signIn, signUp } from '../utils/auth';
+import ProtectedRoute from './ProtectedRoute';
 
 function App() {
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
@@ -18,18 +21,35 @@ function App() {
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
   const [selectedCard, setSelectedCard] = useState(null);
   const [cards, setCards] = useState([]);
-  const [currentUser, setCurrentUser] = useState({ name: '', about: '' });
 
-  useEffect(() => {
+  const [currentUser, setCurrentUser] = useState({});
+
+  const [loggedIn, setLoggedIn] = React.useState(false);
+  const [status, setStatus] = React.useState(true);
+
+  const [email, setEmail] = React.useState('');
+
+  const handleLogin = () => {
+    setLoggedIn(true);
+  };
+
+  const handleLogout = () => {
+    setLoggedIn(false);
+    localStorage.removeItem('jwt');
+    Navigate('/signin');
+  };
+
+  React.useEffect(() => {
     api
       .getInitialCards()
       .then((data) => {
         setCards(data);
       })
       .catch((error) => console.error(error));
+    // handleTokenCheck();
   }, []);
 
-  useEffect(() => {
+  React.useEffect(() => {
     api
       .getInitialProfile()
       .then((data) => {
@@ -37,6 +57,46 @@ function App() {
       })
       .catch((error) => console.error(error));
   }, []);
+
+  React.useEffect(() => {
+    const token = localStorage.getItem('jwt');
+    if (token) {
+      auth
+        .checkToken(token)
+        .then((res) => {
+          if (res) {
+            setEmail(res.data.email);
+            setIsLoggedIn(true);
+            history.push('/');
+          } else {
+            localStorage.removeItem('jwt');
+          }
+        })
+        .catch((err) => console.log(err));
+    }
+  }, []);
+
+  // function handleTokenCheck() {
+  //   if (localStorage.getItem('jwt')) {
+  //     const jwt = localStorage.getItem('jwt');
+  //     getInfo(jwt)
+  //       .then((res) => {
+  //         if (res) {
+  //           handleLogin();
+  //           Navigate('/');
+  //         } else {
+  //           localStorage.removeItem('jwt');
+  //         }
+  //       })
+  //       .catch((err) => {
+  //         if (err === 400) {
+  //           console.log('Token not provided or provided in the wrong format');
+  //         } else if (err === 401) {
+  //           console.log('The provided token is invalid ');
+  //         }
+  //       });
+  //   }
+  // }
 
   function handleCardLike(card) {
     const isLiked = card.likes.some((item) => item._id === currentUser._id);
@@ -115,8 +175,6 @@ function App() {
     <CurrentUserContext.Provider value={currentUser}>
       <Header />
 
-      <Login />
-
       <Main
         onEditAvatarClick={handleEditAvatarClick}
         onEditProfileClick={handleEditProfileClick}
@@ -133,34 +191,29 @@ function App() {
         closeButton={closeButton}
         onClose={closeAllPopups}
       />
-
       <EditProfilePopup
         isOpen={isEditProfilePopupOpen}
         onClose={closeAllPopups}
         closeButton={closeButton}
         onUpdateUser={handleUpdateUser}
       />
-
       <AddPlacePopup
         isOpen={isAddPlacePopupOpen}
         onClose={closeAllPopups}
         closeButton={closeButton}
         onAddPlaceSubmit={handleAddPlaceSubmit}
       />
-
       <PopupWithForm
         modalType={'delete'}
         modalTitle={'Are you sure?'}
         modalButtonText={'Yes'}
         closeButton={closeButton}
       />
-
       <ImagePopup
         closeButton={closeButton}
         selectedCard={selectedCard}
         onClose={closeAllPopups}
       />
-
       <Footer />
     </CurrentUserContext.Provider>
   );
