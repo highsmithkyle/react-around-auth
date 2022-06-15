@@ -33,16 +33,6 @@ function App() {
 
   const [email, setEmail] = React.useState('');
 
-  // const handleLogin = () => {
-  //   setLoggedIn(true);
-  // };
-
-  // const handleLogout = () => {
-  //   setLoggedIn(false);
-  //   localStorage.removeItem('jwt');
-  //   Navigate('/signin');
-  // };
-
   React.useEffect(() => {
     api
       .getInitialCards()
@@ -50,7 +40,6 @@ function App() {
         setCards(data);
       })
       .catch((error) => console.error(error));
-    // handleTokenCheck();
   }, []);
 
   React.useEffect(() => {
@@ -61,46 +50,6 @@ function App() {
       })
       .catch((error) => console.error(error));
   }, []);
-
-  // React.useEffect(() => {
-  //   const token = localStorage.getItem('jwt');
-  //   if (token) {
-  //     auth
-  //       .checkToken(token)
-  //       .then((res) => {
-  //         if (res) {
-  //           setEmail(res.data.email);
-  //           setLoggedIn(true);
-  //           Navigate.push('/');
-  //         } else {
-  //           localStorage.removeItem('jwt');
-  //         }
-  //       })
-  //       .catch((err) => console.log(err));
-  //   }
-  // }, []);
-
-  // function handleTokenCheck() {
-  //   if (localStorage.getItem('jwt')) {
-  //     const jwt = localStorage.getItem('jwt');
-  //     getInfo(jwt)
-  //       .then((res) => {
-  //         if (res) {
-  //           handleLogin();
-  //           Navigate('/');
-  //         } else {
-  //           localStorage.removeItem('jwt');
-  //         }
-  //       })
-  //       .catch((err) => {
-  //         if (err === 400) {
-  //           console.log('Token not provided or provided in the wrong format');
-  //         } else if (err === 401) {
-  //           console.log('The provided token is invalid ');
-  //         }
-  //       });
-  //   }
-  // }
 
   function handleCardLike(card) {
     const isLiked = card.likes.some((item) => item._id === currentUser._id);
