@@ -1,4 +1,10 @@
 @import url(../header/__logo/header__logo.css);
+@import url(../header/__authorize-link/header__authorize-link.css);
+@import url(../header/__authorize-wrapper/header__authorize-wrapper.css);
+@import url(../header/__logo/header__logo.css);
+@import url(../header/__logout/header__logout.css);
+@import url(../header/__user/header__user.css);
+
 .header {
   width: 880px;
   margin: 45px auto 41px;

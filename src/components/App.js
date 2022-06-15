@@ -15,7 +15,11 @@ import { CurrentUserContext } from '../contexts/CurrentUserContext';
 import { getInfo, signIn, signUp } from '../utils/auth';
 import ProtectedRoute from './ProtectedRoute';
 
+import auth from '../utils/auth';
+
 function App() {
+  // const navigare = useNavigate();
+
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
@@ -29,15 +33,15 @@ function App() {
 
   const [email, setEmail] = React.useState('');
 
-  const handleLogin = () => {
-    setLoggedIn(true);
-  };
+  // const handleLogin = () => {
+  //   setLoggedIn(true);
+  // };
 
-  const handleLogout = () => {
-    setLoggedIn(false);
-    localStorage.removeItem('jwt');
-    Navigate('/signin');
-  };
+  // const handleLogout = () => {
+  //   setLoggedIn(false);
+  //   localStorage.removeItem('jwt');
+  //   Navigate('/signin');
+  // };
 
   React.useEffect(() => {
     api
@@ -58,23 +62,23 @@ function App() {
       .catch((error) => console.error(error));
   }, []);
 
-  React.useEffect(() => {
-    const token = localStorage.getItem('jwt');
-    if (token) {
-      auth
-        .checkToken(token)
-        .then((res) => {
-          if (res) {
-            setEmail(res.data.email);
-            setIsLoggedIn(true);
-            history.push('/');
-          } else {
-            localStorage.removeItem('jwt');
-          }
-        })
-        .catch((err) => console.log(err));
-    }
-  }, []);
+  // React.useEffect(() => {
+  //   const token = localStorage.getItem('jwt');
+  //   if (token) {
+  //     auth
+  //       .checkToken(token)
+  //       .then((res) => {
+  //         if (res) {
+  //           setEmail(res.data.email);
+  //           setLoggedIn(true);
+  //           Navigate.push('/');
+  //         } else {
+  //           localStorage.removeItem('jwt');
+  //         }
+  //       })
+  //       .catch((err) => console.log(err));
+  //   }
+  // }, []);
 
   // function handleTokenCheck() {
   //   if (localStorage.getItem('jwt')) {
@@ -173,48 +177,54 @@ function App() {
 
   return (
     <CurrentUserContext.Provider value={currentUser}>
-      <Header />
+      <div className="page">
+        <Header />
 
-      <Main
-        onEditAvatarClick={handleEditAvatarClick}
-        onEditProfileClick={handleEditProfileClick}
-        onAddPlaceClick={handleAddPlaceClick}
-        onCardClick={handleCardClick}
-        cards={cards}
-        onCardLike={handleCardLike}
-        onCardDelete={handleCardDelete}
-      />
+        <Routes>
+          <ProtectedRoute exact path="/">
+            <Main
+              onEditAvatarClick={handleEditAvatarClick}
+              onEditProfileClick={handleEditProfileClick}
+              onAddPlaceClick={handleAddPlaceClick}
+              onCardClick={handleCardClick}
+              cards={cards}
+              onCardLike={handleCardLike}
+              onCardDelete={handleCardDelete}
+            />
+          </ProtectedRoute>
+        </Routes>
+        <Footer />
 
-      <EditAvatarPopup
-        isOpen={isEditAvatarPopupOpen}
-        onUpdateAvatar={handleUpdateAvatar}
-        closeButton={closeButton}
-        onClose={closeAllPopups}
-      />
-      <EditProfilePopup
-        isOpen={isEditProfilePopupOpen}
-        onClose={closeAllPopups}
-        closeButton={closeButton}
-        onUpdateUser={handleUpdateUser}
-      />
-      <AddPlacePopup
-        isOpen={isAddPlacePopupOpen}
-        onClose={closeAllPopups}
-        closeButton={closeButton}
-        onAddPlaceSubmit={handleAddPlaceSubmit}
-      />
-      <PopupWithForm
-        modalType={'delete'}
-        modalTitle={'Are you sure?'}
-        modalButtonText={'Yes'}
-        closeButton={closeButton}
-      />
-      <ImagePopup
-        closeButton={closeButton}
-        selectedCard={selectedCard}
-        onClose={closeAllPopups}
-      />
-      <Footer />
+        <EditAvatarPopup
+          isOpen={isEditAvatarPopupOpen}
+          onUpdateAvatar={handleUpdateAvatar}
+          closeButton={closeButton}
+          onClose={closeAllPopups}
+        />
+        <EditProfilePopup
+          isOpen={isEditProfilePopupOpen}
+          onClose={closeAllPopups}
+          closeButton={closeButton}
+          onUpdateUser={handleUpdateUser}
+        />
+        <AddPlacePopup
+          isOpen={isAddPlacePopupOpen}
+          onClose={closeAllPopups}
+          closeButton={closeButton}
+          onAddPlaceSubmit={handleAddPlaceSubmit}
+        />
+        <PopupWithForm
+          modalType={'delete'}
+          modalTitle={'Are you sure?'}
+          modalButtonText={'Yes'}
+          closeButton={closeButton}
+        />
+        <ImagePopup
+          closeButton={closeButton}
+          selectedCard={selectedCard}
+          onClose={closeAllPopups}
+        />
+      </div>
     </CurrentUserContext.Provider>
   );
 }
