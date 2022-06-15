@@ -18,7 +18,7 @@ import ProtectedRoute from './ProtectedRoute';
 import auth from '../utils/auth';
 
 function App() {
-  // const navigare = useNavigate();
+  // const navigate = useNavigate();
 
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
@@ -28,7 +28,7 @@ function App() {
 
   const [currentUser, setCurrentUser] = useState({});
 
-  const [loggedIn, setLoggedIn] = React.useState(false);
+  const [loggedIn, setLoggedIn] = React.useState(true);
   const [status, setStatus] = React.useState(true);
 
   const [email, setEmail] = React.useState('');
