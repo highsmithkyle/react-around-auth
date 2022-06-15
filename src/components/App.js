@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Switch, Route, Navigate, useNavigate } from 'react-router-dom';
+import { Route, Routes, Navigate, useNavigate } from 'react-router-dom';
 import Header from './Header';
 import Footer from './Footer';
 import Main from './Main';
@@ -129,21 +129,25 @@ function App() {
       <div className="page">
         <Header />
 
-        <Switch>
-          <Route exact path="/">
-            <ProtectedRoute>
-              <Main
-                onEditAvatarClick={handleEditAvatarClick}
-                onEditProfileClick={handleEditProfileClick}
-                onAddPlaceClick={handleAddPlaceClick}
-                onCardClick={handleCardClick}
-                cards={cards}
-                onCardLike={handleCardLike}
-                onCardDelete={handleCardDelete}
-              />
-            </ProtectedRoute>
-          </Route>
-        </Switch>
+        <Routes>
+          <Route
+            exact
+            path="/"
+            element={
+              <ProtectedRoute>
+                <Main
+                  onEditAvatarClick={handleEditAvatarClick}
+                  onEditProfileClick={handleEditProfileClick}
+                  onAddPlaceClick={handleAddPlaceClick}
+                  onCardClick={handleCardClick}
+                  cards={cards}
+                  onCardLike={handleCardLike}
+                  onCardDelete={handleCardDelete}
+                />
+              </ProtectedRoute>
+            }
+          ></Route>
+        </Routes>
         <Footer />
 
         <EditAvatarPopup
