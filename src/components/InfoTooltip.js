@@ -5,7 +5,9 @@ import errorIcon from '../images/error-icon.svg';
 function InfoTooltip(props) {
   return (
     <div
-      className={`modal modal_type_infotooltip ${props.isOpen && 'modal_open'}`}
+      className={`modal modal_type_infotooltip ${
+        props.isOpen && 'modal__toggle'
+      }`}
     >
       <div className={`modal__box modal__box_type_infotooltip`}>
         {props.status === 'success' ? (

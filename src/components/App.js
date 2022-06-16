@@ -1,20 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { Route, Routes, Navigate, useNavigate } from 'react-router-dom';
-
 import { register, authorize, getContent } from '../utils/auth';
-
-/////
-
-// import { Route, Switch, Routes, Redirect } from 'react-router-dom';
 import api from '../utils/api';
-import auth from '../utils/auth';
+import ProtectedRoute from './ProtectedRoute';
+import { CurrentUserContext } from '../contexts/CurrentUserContext';
 
 import Login from './Login';
 import Register from './Register';
 import InfoTooltip from './InfoTooltip';
-
-// import { useHistory } from 'react-router-dom';
-
 import Header from './Header';
 import Footer from './Footer';
 import Main from './Main';
@@ -22,33 +15,23 @@ import PopupWithForm from './PopupWithForm';
 import EditProfilePopup from './EditProfilePopup';
 import AddPlacePopup from './AddPlacePopup';
 import EditAvatarPopup from './EditAvatarPopup';
-import ProtectedRoute from './ProtectedRoute';
-
 import ImagePopup from './ImagePopup';
 import closeButton from '../images/close-button.svg';
 
-import { CurrentUserContext } from '../contexts/CurrentUserContext';
-// import { getInfo, signIn, signUp } from '../utils/auth';
-
 function App() {
-  const navigate = useNavigate();
-
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
+  const [isTooltipOpen, setTooltipOpen] = useState(false);
   const [selectedCard, setSelectedCard] = useState(null);
   const [cards, setCards] = useState([]);
 
-  const [isTooltipOpen, setTooltipOpen] = useState(false);
-
   const [currentUser, setCurrentUser] = useState({});
 
-  const [loggedIn, setLoggedIn] = React.useState(true);
+  const [loggedIn, setLoggedIn] = React.useState(false);
   const [status, setStatus] = React.useState(true);
 
-  const [email, setEmail] = React.useState('');
-
-  const Navigate = useNavigate();
+  const navigate = useNavigate();
 
   const handleLogin = () => {
     setLoggedIn(true);
@@ -57,7 +40,7 @@ function App() {
   const handleLogout = () => {
     setLoggedIn(false);
     localStorage.removeItem('jwt');
-    navigate('signin');
+    navigate('/signin');
   };
 
   useEffect(() => {
@@ -67,6 +50,9 @@ function App() {
         setCards(data);
       })
       .catch((error) => console.error(error));
+
+    handleTokenCheck();
+    //eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -77,6 +63,28 @@ function App() {
       })
       .catch((error) => console.error(error));
   }, []);
+
+  function handleTokenCheck() {
+    if (localStorage.getItem('jwt')) {
+      const jwt = localStorage.getItem('jwt');
+      getContent(jwt)
+        .then((res) => {
+          if (res) {
+            handleLogin();
+            navigate('/');
+          } else {
+            localStorage.removeItem('jwt');
+          }
+        })
+        .catch((err) => {
+          if (err === 400) {
+            console.log('Token not provided or provided in the wrong format');
+          } else if (err === 401) {
+            console.log('The provided token is invalid ');
+          }
+        });
+    }
+  }
 
   function handleCardLike(card) {
     const isLiked = card.likes.some((item) => item._id === currentUser._id);
@@ -130,6 +138,7 @@ function App() {
   }
 
   const handleRegistrationSubmit = (email, password) => {
+    debugger;
     register(email, password)
       .then((res) => {
         if (res.data._id) {
@@ -195,87 +204,93 @@ function App() {
     setIsEditAvatarPopupOpen(false);
     setIsAddPlacePopupOpen(false);
     setSelectedCard(null);
+    setTooltipOpen(false);
   }
 
   return (
     <CurrentUserContext.Provider value={currentUser}>
-      <div className="page">
-        <Header
-          handleLogout={handleLogout}
-          user={localStorage.email}
-          loggedIn={loggedIn}
+      <Header
+        handleLogout={handleLogout}
+        user={localStorage.email}
+        loggedIn={loggedIn}
+      />
+      <Routes>
+        <Route
+          exact
+          path="/"
+          element={
+            <ProtectedRoute loggedIn={loggedIn}>
+              <Main
+                onEditAvatarClick={handleEditAvatarClick}
+                onEditProfileClick={handleEditProfileClick}
+                onAddPlaceClick={handleAddPlaceClick}
+                onCardClick={handleCardClick}
+                cards={cards}
+                onCardLike={handleCardLike}
+                onCardDelete={handleCardDelete}
+              />
+            </ProtectedRoute>
+          }
         />
-        <Routes>
-          <Route
-            exact
-            path="/"
-            element={
-              <ProtectedRoute loggedIn={loggedIn}>
-                <Main
-                  onEditAvatarClick={handleEditAvatarClick}
-                  onEditProfileClick={handleEditProfileClick}
-                  onAddPlaceClick={handleAddPlaceClick}
-                  onCardClick={handleCardClick}
-                  cards={cards}
-                  onCardLike={handleCardLike}
-                  onCardDelete={handleCardDelete}
-                />
-              </ProtectedRoute>
-            }
-          />
-          <Route
-            path="/signin"
-            element={<Login handleLoginSubmit={handleLoginSubmit} />}
-          ></Route>
-          <Route
-            path="/signup"
-            element={
-              <Register handleRegistrationSubmit={handleRegistrationSubmit} />
-            }
-          ></Route>
-          <Route
-            path="*"
-            element={
-              loggedIn ? (
-                <Navigate to="/" replace />
-              ) : (
-                <Navigate to="/signin" replace />
-              )
-            }
-          />
-        </Routes>
-        <Footer />
+        <Route
+          path="/signin"
+          element={<Login handleLoginSubmit={handleLoginSubmit} />}
+        ></Route>
+        <Route
+          path="/signup"
+          element={
+            <Register handleRegistrationSubmit={handleRegistrationSubmit} />
+          }
+        ></Route>
+        <Route
+          path="*"
+          element={
+            loggedIn ? (
+              <Navigate to="/" replace />
+            ) : (
+              <Navigate to="/signin" replace />
+            )
+          }
+        />
+      </Routes>
+      <Footer />
 
-        <EditAvatarPopup
-          isOpen={isEditAvatarPopupOpen}
-          onUpdateAvatar={handleUpdateAvatar}
-          closeButton={closeButton}
-          onClose={closeAllPopups}
-        />
-        <EditProfilePopup
-          isOpen={isEditProfilePopupOpen}
-          onClose={closeAllPopups}
-          closeButton={closeButton}
-          onUpdateUser={handleUpdateUser}
-        />
-        <AddPlacePopup
-          isOpen={isAddPlacePopupOpen}
-          onClose={closeAllPopups}
-          closeButton={closeButton}
-          onAddPlaceSubmit={handleAddPlaceSubmit}
-        />
-        <PopupWithForm
-          modalType={'delete'}
-          modalTitle={'Are you sure?'}
-          modalButtonText={'Yes'}
-          closeButton={closeButton}
-        />
-        <ImagePopup
-          closeButton={closeButton}
-          selectedCard={selectedCard}
-          onClose={closeAllPopups}
-        />
-      </div>
+      <EditAvatarPopup
+        isOpen={isEditAvatarPopupOpen}
+        onUpdateAvatar={handleUpdateAvatar}
+        closeButton={closeButton}
+        onClose={closeAllPopups}
+      />
+      <EditProfilePopup
+        isOpen={isEditProfilePopupOpen}
+        onClose={closeAllPopups}
+        closeButton={closeButton}
+        onUpdateUser={handleUpdateUser}
+      />
+      <AddPlacePopup
+        isOpen={isAddPlacePopupOpen}
+        onClose={closeAllPopups}
+        closeButton={closeButton}
+        onAddPlaceSubmit={handleAddPlaceSubmit}
+      />
+      <PopupWithForm
+        modalType={'delete'}
+        modalTitle={'Are you sure?'}
+        modalButtonText={'Yes'}
+        closeButton={closeButton}
+      />
+      <ImagePopup
+        closeButton={closeButton}
+        selectedCard={selectedCard}
+        onClose={closeAllPopups}
+      />
+
+      <InfoTooltip
+        isOpen={isTooltipOpen}
+        closeButtons={closeButton}
+        status={status}
+        onClose={closeAllPopups}
+      />
     </CurrentUserContext.Provider>
   );
 }

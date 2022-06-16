@@ -1,22 +1,15 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 
-function Register({ onRegister }) {
+function Register({ handleRegistrationSubmit }) {
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
 
-  React.useEffect(() => {
-    setEmail('');
-    setPassword('');
-  }, []);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    handleRegistrationSubmit(email, password);
+  };
 
-  function handleSubmit(event) {
-    const userData = {
-      email,
-      password,
-    };
-    onRegister(userData);
-  }
   return (
     <div className="login">
       <form className="login__form" onSubmit={handleSubmit}>

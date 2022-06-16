@@ -1,5 +1,4 @@
 .header__data {
   display: flex;
   justify-content: space-between;
-  border: 2px solid blue;
 }
