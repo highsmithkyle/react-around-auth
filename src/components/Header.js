@@ -1,33 +1,39 @@
-import React from 'react';
 import logo from '../images/newlogo.png';
-import { Route, Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
-function Header({ onSignOut, email }) {
-  function handleSignOut() {
-    onSignOut();
-  }
+function Header({ loggedIn, handleLogout, user }) {
+  const location = useLocation();
 
   return (
     <header className="header">
-      <img src={logo} alt="Around The World" className="header__logo" />
-      <Route exact path="/">
-        <div className="header__auth-wrapper">
-          <p className="header__user">{email}</p>
-          <button className="header__logout" onClick={handleSignOut}>
+      <img
+        className="header__logo"
+        src={logo}
+        alt="Around the
+        US"
+      />
+      {loggedIn ? (
+        <div className={`header__data`}>
+          <p className="header__user_email">{loggedIn && user}</p>
+          <Link
+            to={'/singin'}
+            className={`header__link header__link__logout`}
+            onClick={loggedIn && handleLogout}
+          >
             Log out
-          </button>
+          </Link>{' '}
         </div>
-      </Route>
-      <Route path="/signup">
-        <Link className="header__auth-link" to="signin">
-          Login
-        </Link>
-      </Route>
-      <Route path="/signin">
-        <Link className="header__auth-link" to="signup">
-          Sign up
-        </Link>
-      </Route>
+      ) : (
+        <div className={`header__data`}>
+          <Link
+            to={location.pathname === '/singin' ? '/singup' : '/singin'}
+            className={`header__link`}
+            onClick={loggedIn && handleLogout}
+          >
+            {location.pathname === '/singin' ? 'Sing up' : 'Sing in'}
+          </Link>
+        </div>
+      )}
     </header>
   );
 }

@@ -1,5 +1,20 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Route, Routes, Navigate, useNavigate } from 'react-router-dom';
+
+import { register, authorize, getContent } from '../utils/auth';
+
+/////
+
+// import { Route, Switch, Routes, Redirect } from 'react-router-dom';
+import api from '../utils/api';
+import auth from '../utils/auth';
+
+import Login from './Login';
+import Register from './Register';
+import InfoTooltip from './InfoTooltip';
+
+// import { useHistory } from 'react-router-dom';
+
 import Header from './Header';
 import Footer from './Footer';
 import Main from './Main';
@@ -7,24 +22,24 @@ import PopupWithForm from './PopupWithForm';
 import EditProfilePopup from './EditProfilePopup';
 import AddPlacePopup from './AddPlacePopup';
 import EditAvatarPopup from './EditAvatarPopup';
-import ImagePopup from './ImagePopup';
-import closeButton from '../images/close-button.svg';
-import api from '../utils/api';
-import Login from './Login';
-import { CurrentUserContext } from '../contexts/CurrentUserContext';
-import { getInfo, signIn, signUp } from '../utils/auth';
 import ProtectedRoute from './ProtectedRoute';
 
-import auth from '../utils/auth';
+import ImagePopup from './ImagePopup';
+import closeButton from '../images/close-button.svg';
+
+import { CurrentUserContext } from '../contexts/CurrentUserContext';
+// import { getInfo, signIn, signUp } from '../utils/auth';
 
 function App() {
-  // const navigate = useNavigate();
+  const navigate = useNavigate();
 
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
   const [selectedCard, setSelectedCard] = useState(null);
   const [cards, setCards] = useState([]);
+
+  const [isTooltipOpen, setTooltipOpen] = useState(false);
 
   const [currentUser, setCurrentUser] = useState({});
 
@@ -33,7 +48,19 @@ function App() {
 
   const [email, setEmail] = React.useState('');
 
-  React.useEffect(() => {
+  const Navigate = useNavigate();
+
+  const handleLogin = () => {
+    setLoggedIn(true);
+  };
+
+  const handleLogout = () => {
+    setLoggedIn(false);
+    localStorage.removeItem('jwt');
+    navigate('/singin');
+  };
+
+  useEffect(() => {
     api
       .getInitialCards()
       .then((data) => {
@@ -42,7 +69,7 @@ function App() {
       .catch((error) => console.error(error));
   }, []);
 
-  React.useEffect(() => {
+  useEffect(() => {
     api
       .getInitialProfile()
       .then((data) => {
@@ -102,6 +129,52 @@ function App() {
       .catch((error) => console.error(error));
   }
 
+  const handleRegistrationSubmit = (email, password) => {
+    register(email, password)
+      .then((res) => {
+        if (res.data._id) {
+          console.log('res OK');
+          setStatus('success');
+          navigate('/singin');
+        } else {
+          console.log('Something went wrong');
+          setStatus('failed');
+        }
+      })
+      .catch((err) => {
+        if (err === 400) {
+          console.log('One of the fields was filled in incorrectly');
+        } else {
+          console.log(err);
+        }
+        setStatus('failed');
+      })
+      .finally(() => {
+        setTooltipOpen(true);
+      });
+  };
+
+  const handleLoginSubmit = (email, password) => {
+    authorize(email, password)
+      .then((res) => {
+        if (res.token) {
+          handleLogin();
+          navigate('/');
+        }
+      })
+      .catch((err) => {
+        if (err === 400) {
+          console.log('One or more of the fields were not provided');
+        } else if (err === 401) {
+          console.log(
+            'the user with the specified email or password was not found',
+          );
+        }
+        setStatus('failed');
+        setTooltipOpen(true);
+      });
+  };
+
   function handleCardClick(card) {
     setSelectedCard(card);
   }
@@ -127,20 +200,49 @@ function App() {
   return (
     <CurrentUserContext.Provider value={currentUser}>
       <div className="page">
-        <Header />
-
+        <Header
+          handleLogout={handleLogout}
+          user={localStorage.email}
+          loggedIn={loggedIn}
+        />
         <Routes>
-          <ProtectedRoute exact path="/">
-            <Main
-              onEditAvatarClick={handleEditAvatarClick}
-              onEditProfileClick={handleEditProfileClick}
-              onAddPlaceClick={handleAddPlaceClick}
-              onCardClick={handleCardClick}
-              cards={cards}
-              onCardLike={handleCardLike}
-              onCardDelete={handleCardDelete}
-            />
-          </ProtectedRoute>
+          <Route
+            exact
+            path="/"
+            element={
+              <ProtectedRoute loggedIn={loggedIn}>
+                <Main
+                  onEditAvatarClick={handleEditAvatarClick}
+                  onEditProfileClick={handleEditProfileClick}
+                  onAddPlaceClick={handleAddPlaceClick}
+                  onCardClick={handleCardClick}
+                  cards={cards}
+                  onCardLike={handleCardLike}
+                  onCardDelete={handleCardDelete}
+                />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/singin"
+            element={<Login handleLoginSubmit={handleLoginSubmit} />}
+          ></Route>
+          <Route
+            path="/singup"
+            element={
+              <Register handleRegistrationSubmit={handleRegistrationSubmit} />
+            }
+          ></Route>
+          <Route
+            path="*"
+            element={
+              loggedIn ? (
+                <Navigate to="/" replace />
+              ) : (
+                <Navigate to="/singin" replace />
+              )
+            }
+          />
         </Routes>
         <Footer />
 
