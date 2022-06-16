@@ -23,7 +23,6 @@ export const register = (email, password) => {
 };
 
 export const authorize = (email, password) => {
-  debugger;
   return fetch(`${BASE_URL}/signin`, {
     method: 'POST',
     headers: {

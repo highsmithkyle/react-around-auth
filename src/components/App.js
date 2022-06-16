@@ -22,12 +22,10 @@ function App() {
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
-  const [isTooltipOpen, setTooltipOpen] = useState(false);
+  const [isTooltipOpen, setTooltipOpen] = useState(true);
   const [selectedCard, setSelectedCard] = useState(null);
   const [cards, setCards] = useState([]);
-
   const [currentUser, setCurrentUser] = useState({});
-
   const [loggedIn, setLoggedIn] = React.useState(false);
   const [status, setStatus] = React.useState(true);
 
@@ -138,7 +136,7 @@ function App() {
   }
 
   const handleRegistrationSubmit = (email, password) => {
-    debugger;
+    // debugger;
     register(email, password)
       .then((res) => {
         if (res.data._id) {
