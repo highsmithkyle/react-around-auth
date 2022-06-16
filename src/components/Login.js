@@ -1,7 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
-function Login({ onLogin }) {
+function Login({ handleLoginSubmit }) {
   const [email, setEmail] = React.useState('');
   const [password, setPassword] = React.useState('');
 
@@ -10,14 +10,12 @@ function Login({ onLogin }) {
     setPassword('');
   }, []);
 
-  function handleSubmit(e) {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    const userData = {
-      email,
-      password,
-    };
-    onLogin(userData);
-  }
+    handleLoginSubmit(email, password);
+    setEmail('');
+    setPassword('');
+  };
 
   return (
     <div className="login">
@@ -51,8 +49,10 @@ function Login({ onLogin }) {
             Log in
           </button>
           <p className="login__text">
-            Not a member yet?{''}
-            <Link className="login__link" to="/signup"></Link>
+            Not a member yet?{' '}
+            <Link className="login__link" to="/signup">
+              Sign up here!
+            </Link>
           </p>
         </div>
       </form>

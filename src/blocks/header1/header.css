@@ -1,0 +1,29 @@
+@import url(../header/__logo/header__logo.css);
+@import url(../header/__authorize-link/header__authorize-link.css);
+@import url(../header/__authorize-wrapper/header__authorize-wrapper.css);
+@import url(../header/__logo/header__logo.css);
+@import url(../header/__logout/header__logout.css);
+@import url(../header/__user/header__user.css);
+
+.header {
+  width: 880px;
+  margin: 45px auto 41px;
+  min-height: 74px;
+  border-bottom: 1px solid rgba(84, 84, 84, 0.7);
+}
+
+@media screen and (max-width: 900px) {
+  .header {
+    width: 600px;
+  }
+}
+
+@media screen and (max-width: 625px) {
+  .header {
+    width: 320px;
+    margin: 28px auto 0;
+    padding-left: 27px;
+    min-height: 56px;
+    box-sizing: border-box;
+  }
+}

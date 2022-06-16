@@ -57,7 +57,7 @@ function App() {
   const handleLogout = () => {
     setLoggedIn(false);
     localStorage.removeItem('jwt');
-    navigate('/singin');
+    navigate('signin');
   };
 
   useEffect(() => {
@@ -135,7 +135,7 @@ function App() {
         if (res.data._id) {
           console.log('res OK');
           setStatus('success');
-          navigate('/singin');
+          navigate('/signin');
         } else {
           console.log('Something went wrong');
           setStatus('failed');
@@ -224,11 +224,11 @@ function App() {
             }
           />
           <Route
-            path="/singin"
+            path="/signin"
             element={<Login handleLoginSubmit={handleLoginSubmit} />}
           ></Route>
           <Route
-            path="/singup"
+            path="/signup"
             element={
               <Register handleRegistrationSubmit={handleRegistrationSubmit} />
             }
@@ -239,7 +239,7 @@ function App() {
               loggedIn ? (
                 <Navigate to="/" replace />
               ) : (
-                <Navigate to="/singin" replace />
+                <Navigate to="/signin" replace />
               )
             }
           />

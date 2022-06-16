@@ -1,10 +1,11 @@
 function Footer() {
-    return (
-        <footer className="footer">
-            <p className="footer__text">© Kyle Highsmith {new Date().getFullYear()} Around The U.S.</p>
-        </footer>
-    );
+  return (
+    <footer className="footer">
+      <p className="footer__text">
+        © Kyle Highsmith {new Date().getFullYear()} Around The World.
+      </p>
+    </footer>
+  );
 }
 
 export default Footer;
-

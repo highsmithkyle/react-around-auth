@@ -11,3 +11,5 @@
 @import url(./blocks/modal/_toggle/modal_toggle.css);
 @import url(./blocks/modal/__box/_type/modal__box_type_expand-image.css);
 @import url(./blocks/login/login.css);
+
+@import url(./blocks/infotooltip/infotooltip.css);
