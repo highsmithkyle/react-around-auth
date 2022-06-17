@@ -1,6 +1,6 @@
 import React from 'react';
-import successIcon from '../images/success-icon.svg';
-import errorIcon from '../images/error-icon.svg';
+import successIcon from '../images/success.gif';
+import errorIcon from '../images/error.gif';
 import closeButton from '../images/close-button.svg';
 
 function InfoTooltip(props) {
