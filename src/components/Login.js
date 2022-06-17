@@ -13,8 +13,6 @@ function Login({ handleLoginSubmit }) {
   const handleSubmit = (e) => {
     e.preventDefault();
     handleLoginSubmit(email, password);
-    setEmail('');
-    setPassword('');
   };
 
   return (

@@ -23,7 +23,7 @@ function EditAvatarPopup(props) {
       modalTitle={'Edit profile picture'}
       modalButtonText={'Change'}
       closeButton={props.closeButton}
-      onClose={closeAllPopups}
+      onClose={props.onClose}
       onSubmit={handleSubmit}
     >
       <input

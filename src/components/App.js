@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { Route, Routes, Navigate, useNavigate } from 'react-router-dom';
-import { register, authorize, getContent } from '../utils/auth';
+import { register, authorize, checkToken } from '../utils/auth';
 import api from '../utils/api';
 import ProtectedRoute from './ProtectedRoute';
 import { CurrentUserContext } from '../contexts/CurrentUserContext';
@@ -65,7 +65,7 @@ function App() {
   function handleTokenCheck() {
     if (localStorage.getItem('jwt')) {
       const jwt = localStorage.getItem('jwt');
-      getContent(jwt)
+      checkToken(jwt)
         .then((res) => {
           if (res) {
             handleLogin();
