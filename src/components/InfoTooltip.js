@@ -1,12 +1,13 @@
 import React from 'react';
 import successIcon from '../images/success-icon.svg';
 import errorIcon from '../images/error-icon.svg';
+import closeButton from '../images/close-button.svg';
 
 function InfoTooltip(props) {
   return (
     <div
       className={`modal modal_type_infotooltip ${
-        props.isOpen && 'modal__toggle'
+        props.isOpen && 'modal_toggle'
       }`}
     >
       <div className={`modal__box modal__box_type_infotooltip`}>
@@ -34,9 +35,9 @@ function InfoTooltip(props) {
           </div>
         )}
         <button
-          className={`modal__close-button modal__close-button_type_edit button`}
+          className={`modal__close-button`}
           type="button"
-          style={{ backgroundImage: `url(${props.closeButton})` }}
+          style={{ backgroundImage: `url(${closeButton})` }}
           onClick={props.onClose}
         />
       </div>

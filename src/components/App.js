@@ -22,7 +22,7 @@ function App() {
   const [isEditAvatarPopupOpen, setIsEditAvatarPopupOpen] = useState(false);
   const [isEditProfilePopupOpen, setIsEditProfilePopupOpen] = useState(false);
   const [isAddPlacePopupOpen, setIsAddPlacePopupOpen] = useState(false);
-  const [isTooltipOpen, setTooltipOpen] = useState(true);
+  const [isTooltipOpen, setTooltipOpen] = useState(false);
   const [selectedCard, setSelectedCard] = useState(null);
   const [cards, setCards] = useState([]);
   const [currentUser, setCurrentUser] = useState({});
@@ -204,6 +204,18 @@ function App() {
     setSelectedCard(null);
     setTooltipOpen(false);
   }
+
+  useEffect(() => {
+    const closeByEscape = (e) => {
+      if (e.key === 'Escape') {
+        closeAllPopups();
+      }
+    };
+
+    document.addEventListener('keydown', closeByEscape);
+
+    return () => document.removeEventListener('keydown', closeByEscape);
+  }, []);
 
   return (
     <CurrentUserContext.Provider value={currentUser}>
